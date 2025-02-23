@@ -1,0 +1,106 @@
+import java.util.*;
+
+class Card {
+    String suit;
+    String rank;
+
+    public Card(String suit, String rank) {
+        this.suit = suit;
+        this.rank = rank;
+    }
+
+    @Override
+    public String toString() {
+        return rank + " of " + suit;
+    }
+}
+
+public class Main1 {
+    private static final Map<String, Set<Card>> cardCollection = new HashMap<>();
+    private static final Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        while (true) {
+            System.out.println("\nCard Collection System");
+            System.out.println("1. Add Card");
+            System.out.println("2. Find Cards by Suit");
+            System.out.println("3. Display All Cards");
+            System.out.println("4. Remove Card");
+            System.out.println("5. Exit");
+            System.out.print("Enter your choice: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // consume newline
+
+            switch (choice) {
+                case 1 -> addCard();
+                case 2 -> findCardsBySuit();
+                case 3 -> displayAllCards();
+                case 4 -> removeCard();
+                case 5 -> {
+                    System.out.println("Exiting system...");
+                    return;
+                }
+                default -> System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+
+    private static void addCard() {
+        System.out.print("Enter Card Suit (e.g., Hearts, Spades): ");
+        String suit = scanner.nextLine();
+        System.out.print("Enter Card Rank (e.g., Ace, King, 10): ");
+        String rank = scanner.nextLine();
+
+        cardCollection.putIfAbsent(suit, new HashSet<>());
+        Card newCard = new Card(suit, rank);
+        if (cardCollection.get(suit).add(newCard)) {
+            System.out.println("Card added: " + newCard);
+        } else {
+            System.out.println("Error: Card \"" + newCard + "\" already exists.");
+        }
+    }
+
+    private static void findCardsBySuit() {
+        System.out.print("Enter Suit to search: ");
+        String suit = scanner.nextLine();
+
+        if (cardCollection.containsKey(suit) && !cardCollection.get(suit).isEmpty()) {
+            System.out.println("Cards in " + suit + ": " + cardCollection.get(suit));
+        } else {
+            System.out.println("No cards found for " + suit + ".");
+        }
+    }
+
+    private static void displayAllCards() {
+        if (cardCollection.isEmpty()) {
+            System.out.println("No cards found.");
+        } else {
+            cardCollection.forEach((suit, cards) -> {
+                for (Card card : cards) {
+                    System.out.println(card);
+                }
+            });
+        }
+    }
+
+    private static void removeCard() {
+        System.out.print("Enter Card Suit to remove: ");
+        String suit = scanner.nextLine();
+        System.out.print("Enter Card Rank to remove: ");
+        String rank = scanner.nextLine();
+
+        if (cardCollection.containsKey(suit)) {
+            Card toRemove = new Card(suit, rank);
+            if (cardCollection.get(suit).remove(toRemove)) {
+                System.out.println("Card removed: " + toRemove);
+                if (cardCollection.get(suit).isEmpty()) {
+                    cardCollection.remove(suit);
+                }
+            } else {
+                System.out.println("Error: Card \"" + toRemove + "\" not found.");
+            }
+        } else {
+            System.out.println("Error: No cards found for " + suit + ".");
+        }
+    }
+}
